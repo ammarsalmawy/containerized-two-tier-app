@@ -31,11 +31,11 @@ jobs:
           ECR_REPOSITORY: webapp
           IMAGE_TAG: v0.1
         run: |
-          docker build -t $ECR_REGISTRY.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_WEBAPP:latest -f Dockerfile .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile .
 
       - name: Push Webapp Image to ECR
         run: |
-          docker push $ECR_REGISTRY.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_WEBAPP:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       # Build and Push MySQL Image
       - name: Build MySQL Docker Image
@@ -44,8 +44,8 @@ jobs:
           ECR_REPOSITORY: mysql
           IMAGE_TAG: v0.1
         run: |
-          docker build -t $ECR_REGISTRY.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_MYSQL:latest -f Dockerfile_mysql .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile_mysql .
 
       - name: Push MySQL Image to ECR
         run: |
-          docker push $ECR_REGISTRY.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_MYSQL:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
