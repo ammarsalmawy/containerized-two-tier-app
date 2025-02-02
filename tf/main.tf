@@ -1,9 +1,9 @@
-# Configure AWS provider
+
 provider "aws" {
-  region = "us-east-1" # Update your region
+  region = "us-east-1"
 }
 
-# Create ECR repositories
+
 resource "aws_ecr_repository" "webapp" {
   name = "webapp"
 }
@@ -12,40 +12,18 @@ resource "aws_ecr_repository" "mysql" {
   name = "mysql"
 }
 
-# Fetch default VPC
+
 data "aws_vpc" "default" {
   default = true
 }
 
-# Fetch public subnets in default VPC
+
 data "aws_subnets" "public" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
   }
 }
-
-# # Create IAM role for EC2 to access ECR
-# resource "aws_iam_role" "ec2_ecr_access" {
-#   name = "ec2-ecr-access-role"
-
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [{
-#       Action = "sts:AssumeRole",
-#       Effect = "Allow",
-#       Principal = {
-#         Service = "ec2.amazonaws.com"
-#       }
-#     }]
-#   })
-# }
-
-# # Attach ECR read-only policy to the role
-# resource "aws_iam_role_policy_attachment" "ecr_access" {
-#   role       = aws_iam_role.ec2_ecr_access.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-# }
 
 
 
