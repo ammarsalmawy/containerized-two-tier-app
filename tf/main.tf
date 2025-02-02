@@ -47,9 +47,10 @@ data "aws_subnets" "public" {
 #   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 # }
 
-# Create EC2 instance profile
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "ec2-ecr-profile"
+
+
+data "aws_iam_instance_profile" "ec2_profile" {
+  name = "LabInstanceProfile"
 }
 
 # Security group for EC2
@@ -86,14 +87,22 @@ resource "aws_key_pair" "ec2_key" {
 
 # Launch EC2 instance
 resource "aws_instance" "app_server" {
-  ami                    = "ami-0c02fb55956c7d316" # Amazon Linux 2 AMI (update if needed)
+  ami                    = "ami-0c02fb55956c7d316" 
   instance_type          = "t2.micro"
-  subnet_id              = element(data.aws_subnets.public.ids, 0) # Use first public subnet
+  subnet_id              = element(data.aws_subnets.public.ids, 0) 
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
+  iam_instance_profile   = data.aws_iam_instance_profile.ec2_profile.name
 
   key_name = aws_key_pair.ec2_key.key_name
-
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum update -y
+              sudo amazon-linux-extras enable docker
+              sudo yum install docker -y
+              sudo service docker start
+              sudo usermod -aG docker ec2-user
+              sudo systemctl enable docker
+            EOF
   tags = {
     Name = "Assignment1-EC2"
   }
